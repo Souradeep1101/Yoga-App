@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "433378237444",
+    "firebase_url": "https://yoga-app-b28d4-default-rtdb.firebaseio.com",
+    "project_id": "yoga-app-b28d4",
+    "storage_bucket": "yoga-app-b28d4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:433378237444:android:45643d31d145db83f5e951",
+        "android_client_info": {
+          "package_name": "com.souradeep.yoga_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "433378237444-s8c98nbslsl2f0c90v8ffno59ovhe801.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBg-eQVRQa5PPCCwtMdqlboNDkAJ8ys0-s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "433378237444-s8c98nbslsl2f0c90v8ffno59ovhe801.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "433378237444-getlr6cvvpbluf1mjpt2121am24a01od.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.souradeep.yogaApp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
