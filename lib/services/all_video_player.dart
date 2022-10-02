@@ -16,17 +16,11 @@ class _AllVideoPlayerState extends State<AllVideoPlayer> {
   late ChewieController _chewieController;
   String videoUrl = 'video url here';
 
-  Future<void> initVideoPlayer() async{
-
-  }
-
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     _chewieController = ChewieController(videoPlayerController: widget.videoPlayerController,
-        // aspectRatio: widget.videoPlayerController.value.aspectRatio,
-        aspectRatio: 16/9,
         autoInitialize: true,
         looping: widget.looping,
         errorBuilder: (context, errorMessage) {

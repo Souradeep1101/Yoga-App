@@ -69,7 +69,7 @@ class _ViewCourseState extends State<ViewCourse> {
                           ),
                           TextButton(
                             onPressed: () {
-                              Share.share('Check out the latest course: ${value['Title']} uploaded on the Yoga App! Download the app now!');                            },
+                              Share.share('Check out the latest course: ${value['title']} uploaded on the Yoga App! Download the app now!');                            },
                             child: const Text('Share'),
                           ),
                         ],

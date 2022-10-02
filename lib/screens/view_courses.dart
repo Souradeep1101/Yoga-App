@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
@@ -34,7 +35,12 @@ class _ViewCoursesState extends State<ViewCourses> {
                   clipBehavior: Clip.antiAlias,
                   child: Column(
                     children: [
-                      Image.network(value['thumbnail'].toString()),
+                      CachedNetworkImage(
+                        imageUrl: value['thumbnail'].toString(),
+                        progressIndicatorBuilder: (context, url, downloadProgress) =>
+                            CircularProgressIndicator(value: downloadProgress.progress),
+                        errorWidget: (context, url, error) => const Icon(Icons.error),
+                      ),
                       ListTile(
                         leading: const Icon(Icons.arrow_drop_down_circle),
                         title: Text(value['title'].toString()),

@@ -16,7 +16,6 @@ class AuthGate extends StatelessWidget {
   Widget build(BuildContext context) {
     return StreamBuilder<User?>(
       stream: FirebaseAuth.instance.authStateChanges(),
-      // If the user is already signed-in, use it as initial data
       initialData: FirebaseAuth.instance.currentUser,
       builder: (context, snapshot) {
         // User is not signed in
@@ -25,30 +24,26 @@ class AuthGate extends StatelessWidget {
             providerConfigs: [
               EmailProviderConfiguration(),
               AppleProviderConfiguration(),
-              // GoogleProviderConfiguration(
-              //   clientId: '433378237444-s8c98nbslsl2f0c90v8ffno59ovhe801.apps.googleusercontent.com',
-              // ),
-              //PhoneProviderConfiguration(),
             ],
           );
         }
         user = FirebaseAuth.instance.currentUser;
-        // Render your application if authenticated
-        print('${user} email');
-        // return user != null ? (user!.displayName != null && user!.photoURL != null && user!.emailVerified != null ? Home() : (user!.displayName != null && user!.photoURL != null ? ProfileCreation() : (user!.emailVerified != null || user!.emailVerified != true ?EmailVerify() : Home()))): Text('Please reinstall the app!');
         if(user != null) {
           if(user?.displayName != null && user?.photoURL != null && (user?.emailVerified != null && user?.emailVerified != false) ) {
-            return Home();
+            return const Home();
           }
           else {
             if(user?.displayName == null && user?.photoURL == null && (user?.emailVerified == null || user?.emailVerified != true)) {
-              return ProfileCreation();
+              return const ProfileCreation();
             }
-            else return EmailVerify();
+            else {
+              return const EmailVerify();
+            }
           }
         }
-        else return ErrorScreen();
-        //return Home();
+        else {
+          return const ErrorScreen();
+        }
       },
     );
   }
