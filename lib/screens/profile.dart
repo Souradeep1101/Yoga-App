@@ -8,12 +8,10 @@ class Profile extends StatefulWidget {
 
   @override
   State<Profile> createState() => _ProfileState();
-
 }
 
 class _ProfileState extends State<Profile> {
-
-  Future<void> reload() async{
+  Future<void> reload() async {
     await FirebaseAuth.instance.currentUser!.reload();
   }
 
@@ -29,30 +27,32 @@ class _ProfileState extends State<Profile> {
     reload();
     return ProfileScreen(
       appBar: AppBar(
-        title: Text('Profile', style: TextStyle(color: Colors.black),),
+        title: const Text(
+          'Profile',
+          style: TextStyle(color: Colors.black),
+        ),
         elevation: 0.0,
-        backgroundColor: Colors.transparent,
-        iconTheme: IconThemeData(color: Colors.black),
+        backgroundColor: Colors.cyan[100],
+        iconTheme: const IconThemeData(color: Colors.black),
       ),
-      providerConfigs: [
+      providerConfigs: const [
         EmailProviderConfiguration(),
         GoogleProviderConfiguration(
-          clientId: '433378237444-s8c98nbslsl2f0c90v8ffno59ovhe801.apps.googleusercontent.com',
+          clientId:
+              '433378237444-s8c98nbslsl2f0c90v8ffno59ovhe801.apps.googleusercontent.com',
         ),
-        // FacebookProviderConfiguration(
-        //   clientId: '...',
-        // ),
-        // TwitterProviderConfiguration(
-        //   clientId: '...',
-        // ),
-        //AppleProviderConfiguration(),
       ],
       avatarSize: 160,
       children: [
-        MaterialButton(onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => ChangeProfileImage()));
-        },
-          child: Text('Change Profile Image'),
+        MaterialButton(
+          onPressed: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (BuildContext context) =>
+                        const ChangeProfileImage()));
+          },
+          child: const Text('Change Profile Image'),
         ),
       ],
     );

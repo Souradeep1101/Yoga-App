@@ -18,7 +18,6 @@ class CreateCourse extends StatefulWidget {
 }
 
 class _CreateCourseState extends State<CreateCourse> {
-
   dynamic submitState = const Text('Submit');
   String? courseName;
   final _formKey = GlobalKey<FormState>();
@@ -42,7 +41,7 @@ class _CreateCourseState extends State<CreateCourse> {
     super.dispose();
   }
 
-  Widget imageProfile(){
+  Widget imageProfile() {
     return Stack(
       children: [
         Container(
@@ -52,7 +51,9 @@ class _CreateCourseState extends State<CreateCourse> {
             color: Colors.black,
             shape: BoxShape.rectangle,
             image: DecorationImage(
-              image: _imageFile == null? const AssetImage('assets/white_img_background.jpg') : FileImage(File(_imageFile!.path)) as ImageProvider<Object>,
+              image: _imageFile == null
+                  ? const AssetImage('assets/white_img_background.jpg')
+                  : FileImage(File(_imageFile!.path)) as ImageProvider<Object>,
             ),
           ),
         ),
@@ -60,15 +61,21 @@ class _CreateCourseState extends State<CreateCourse> {
           bottom: 20,
           right: 20,
           child: InkWell(
-            child: const Icon(Icons.camera_alt_outlined, color: Colors.black, size: 28.0,),
+            child: const Icon(
+              Icons.camera_alt_outlined,
+              color: Colors.black,
+              size: 28.0,
+            ),
             onTap: () {
-              showModalBottomSheet(context: context, builder: (builder) => bottomSheet());
+              showModalBottomSheet(
+                  context: context, builder: (builder) => bottomSheet());
             },
           ),
         ),
       ],
     );
   }
+
   Widget bottomSheet() {
     return Container(
       height: 100,
@@ -85,7 +92,9 @@ class _CreateCourseState extends State<CreateCourse> {
               fontSize: 20.0,
             ),
           ),
-          const SizedBox(height: 20,),
+          const SizedBox(
+            height: 20,
+          ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -109,93 +118,125 @@ class _CreateCourseState extends State<CreateCourse> {
       ),
     );
   }
-  void takePhoto(ImageSource source) async{
+
+  void takePhoto(ImageSource source) async {
     final pickedFile = await _picker.pickImage(source: source);
-    setState((){_imageFile = pickedFile;});
+    setState(() {
+      _imageFile = pickedFile;
+    });
     path = _imageFile!.path;
-    fileName = _imageFile!.name;}
+    fileName = _imageFile!.name;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Create a course', style: TextStyle(color: Colors.black),),
+        title: const Text(
+          'Create a course',
+          style: TextStyle(color: Colors.black),
+        ),
         elevation: 0.0,
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.cyan[100],
         iconTheme: const IconThemeData(color: Colors.black),
       ),
       body: ListView(
         children: [
           Form(
-          key: _formKey,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              imageProfile(),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-                child: TextFormField(
-                  controller: title,
-                  style: const TextStyle(
-                    fontSize: 20,
-                    color: Colors.black,
+            key: _formKey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                imageProfile(),
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+                  child: TextFormField(
+                    controller: title,
+                    style: const TextStyle(
+                      fontSize: 20,
+                      color: Colors.black,
+                    ),
+                    autofocus: true,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'Enter title',
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please Enter the Title';
+                      }
+                      return null;
+                    },
                   ),
-                  autofocus: true,
-                  decoration: const InputDecoration(
-                    border:OutlineInputBorder(),
-                    labelText: 'Enter title',
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please Enter the Title';
-                    }
-                    return null;
+                ),
+                FilterChip(
+                  label: const Text('Freemium'),
+                  onSelected: (bool value) {
+                    setState(() {
+                      freemium = value;
+                    });
                   },
+                  selected: freemium,
                 ),
-              ),
-              FilterChip(label: const Text('Freemium'), onSelected: (bool value) {
-                setState(() {freemium = value;});
-              },
-                selected: freemium,
-              ),
-              ElevatedButton(
-                style: ButtonStyle(
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                ElevatedButton(
+                  style: ButtonStyle(
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                       RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(25.0)
-                      ),
+                          borderRadius: BorderRadius.circular(25.0)),
+                    ),
+                    fixedSize: MaterialStateProperty.all(const Size(240, 25)),
                   ),
-                  fixedSize: MaterialStateProperty.all(const Size(240, 25)),
+                  onPressed: () async {
+                    if (_formKey.currentState!.validate() &&
+                        _imageFile != null) {
+                      setState(() {
+                        submitState = const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                            ));
+                      });
+                      await storage.uploadFile(
+                          path!, fileName!, 'thumbnails/course_thumbnails');
+                      imageUrl = await storageRef
+                          .child("thumbnails/course_thumbnails/$fileName")
+                          .getDownloadURL();
+                      course = IdentifyCourse(
+                          courseName:
+                              DateTime.now().millisecondsSinceEpoch.toString());
+                      await databaseInstance.writeData(
+                          database,
+                          'courses',
+                          '',
+                          {
+                            'title': title.text,
+                            'freemium': freemium,
+                            'thumbnail': imageUrl,
+                            'uploadDate': DateFormat.yMMMMd('en_US')
+                                .format(DateTime.now()),
+                            'uploadTime':
+                                DateFormat.jm().format(DateTime.now()),
+                          },
+                          false,
+                          true);
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => Upload(
+                                    courseName: id,
+                                  )));
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                          content: Text('Please enter the required details!')));
+                    }
+                  },
+                  child: submitState,
                 ),
-                onPressed: () async{
-                  if (_formKey.currentState!.validate() && _imageFile != null) {
-                    setState(() {submitState = const SizedBox(width: 20, height: 20,child: CircularProgressIndicator(color: Colors.white,));});
-                    await storage.uploadFile(path!, fileName!, 'thumbnails/course_thumbnails');
-                    imageUrl = await storageRef.child("thumbnails/course_thumbnails/$fileName").getDownloadURL();
-                    course = IdentifyCourse(courseName: DateTime.now().millisecondsSinceEpoch.toString());
-                    await databaseInstance.writeData(
-                        database,
-                        'courses',
-                        '',
-                        {
-                            'title' : title.text,
-                            'freemium' : freemium,
-                            'thumbnail' : imageUrl,
-                            'uploadDate' : DateFormat.yMMMMd('en_US').format(DateTime.now()),
-                            'uploadTime' : DateFormat.jm().format(DateTime.now()),
-                        },
-                        false, true);
-                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Upload(courseName: id,)));
-                  }
-                  else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Please enter the required details!')));
-                  }
-                },
-                child: submitState,
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
         ],
       ),
     );

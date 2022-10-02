@@ -5,14 +5,16 @@ import 'package:video_player/video_player.dart';
 class AllVideoPlayer extends StatefulWidget {
   late VideoPlayerController videoPlayerController;
   late bool looping;
-  AllVideoPlayer({Key? key, required this.videoPlayerController, required this.looping}) : super(key: key);
+
+  AllVideoPlayer(
+      {Key? key, required this.videoPlayerController, required this.looping})
+      : super(key: key);
 
   @override
   State<AllVideoPlayer> createState() => _AllVideoPlayerState();
 }
 
 class _AllVideoPlayerState extends State<AllVideoPlayer> {
-
   late ChewieController _chewieController;
   String videoUrl = 'video url here';
 
@@ -20,7 +22,8 @@ class _AllVideoPlayerState extends State<AllVideoPlayer> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    _chewieController = ChewieController(videoPlayerController: widget.videoPlayerController,
+    _chewieController = ChewieController(
+        videoPlayerController: widget.videoPlayerController,
         autoInitialize: true,
         looping: widget.looping,
         errorBuilder: (context, errorMessage) {
@@ -30,8 +33,7 @@ class _AllVideoPlayerState extends State<AllVideoPlayer> {
               style: const TextStyle(color: Colors.red),
             ),
           );
-        }
-    );
+        });
   }
 
   @override

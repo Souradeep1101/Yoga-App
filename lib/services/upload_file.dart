@@ -41,7 +41,7 @@ class _UploadFileState extends State<UploadFile> {
     super.dispose();
   }
 
-  Widget imageProfile(){
+  Widget imageProfile() {
     return Stack(
       children: [
         Container(
@@ -51,7 +51,9 @@ class _UploadFileState extends State<UploadFile> {
             color: Colors.black,
             shape: BoxShape.rectangle,
             image: DecorationImage(
-              image: _imageFile == null? const AssetImage('assets/white_img_background.jpg') : FileImage(File(_imageFile!.path)) as ImageProvider<Object>,
+              image: _imageFile == null
+                  ? const AssetImage('assets/white_img_background.jpg')
+                  : FileImage(File(_imageFile!.path)) as ImageProvider<Object>,
             ),
           ),
         ),
@@ -59,9 +61,14 @@ class _UploadFileState extends State<UploadFile> {
           bottom: 20,
           right: 20,
           child: InkWell(
-            child: const Icon(Icons.camera_alt_outlined, color: Colors.black, size: 28.0,),
+            child: const Icon(
+              Icons.camera_alt_outlined,
+              color: Colors.black,
+              size: 28.0,
+            ),
             onTap: () {
-              showModalBottomSheet(context: context, builder: (builder) => bottomSheet());
+              showModalBottomSheet(
+                  context: context, builder: (builder) => bottomSheet());
             },
           ),
         ),
@@ -85,7 +92,9 @@ class _UploadFileState extends State<UploadFile> {
               fontSize: 20.0,
             ),
           ),
-          const SizedBox(height: 20,),
+          const SizedBox(
+            height: 20,
+          ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -110,9 +119,11 @@ class _UploadFileState extends State<UploadFile> {
     );
   }
 
-  void takePhoto(ImageSource source) async{
+  void takePhoto(ImageSource source) async {
     final pickedFile = await _picker.pickImage(source: source);
-    setState((){_imageFile = pickedFile;});
+    setState(() {
+      _imageFile = pickedFile;
+    });
     path = _imageFile!.path;
     fileName = _imageFile!.name;
   }
@@ -121,117 +132,125 @@ class _UploadFileState extends State<UploadFile> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Upload File', style: TextStyle(color: Colors.black),),
+        title: const Text(
+          'Upload File',
+          style: TextStyle(color: Colors.black),
+        ),
         elevation: 0.0,
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.cyan[100],
         iconTheme: const IconThemeData(color: Colors.black),
       ),
       body: ListView(
-        children: [Form(
-          key: _formKey,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              imageProfile(),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-                child: TextFormField(
-                  controller: title,
-                  style: const TextStyle(
-                    fontSize: 20,
-                    color: Colors.black,
+        children: [
+          Form(
+            key: _formKey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                imageProfile(),
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+                  child: TextFormField(
+                    controller: title,
+                    style: const TextStyle(
+                      fontSize: 20,
+                      color: Colors.black,
+                    ),
+                    autofocus: true,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'Enter title',
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please Enter the Title';
+                      }
+                      return null;
+                    },
                   ),
-                  autofocus: true,
-                  decoration: const InputDecoration(
-                    border:OutlineInputBorder(),
-                    labelText: 'Enter title',
+                ),
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+                  child: TextFormField(
+                    controller: description,
+                    style: const TextStyle(
+                      fontSize: 20,
+                      color: Colors.black,
+                    ),
+                    autofocus: true,
+                    maxLines: 10,
+                    maxLength: 300,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'Enter description',
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please Enter the Description';
+                      }
+                      return null;
+                    },
                   ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please Enter the Title';
+                ),
+                ElevatedButton(
+                  style: ButtonStyle(
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(25.0))),
+                    fixedSize: MaterialStateProperty.all(const Size(240, 25)),
+                  ),
+                  onPressed: () async {
+                    if (_formKey.currentState!.validate() &&
+                        _imageFile != null) {
+                      setState(() {
+                        submitState = const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                            ));
+                      });
+                      await storage.uploadFile(path!, fileName!, 'thumbnails');
+                      await storage.uploadFile(
+                          pathAndName!.path, pathAndName!.fileName, 'videos');
+                      imageUrl = await storageRef
+                          .child("thumbnails/$fileName")
+                          .getDownloadURL();
+                      videoUrl = await storageRef
+                          .child("videos/${pathAndName!.fileName}")
+                          .getDownloadURL();
+                      await databaseInstance.writeData(
+                          database,
+                          'courses/${widget.courseName}/videos',
+                          '',
+                          {
+                            'title': title.text,
+                            'url': videoUrl,
+                            'description': description.text,
+                            'thumbnail': imageUrl,
+                            'uploadDate': DateFormat.yMMMMd('en_US')
+                                .format(DateTime.now()),
+                            'uploadTime':
+                                DateFormat.jm().format(DateTime.now()),
+                          },
+                          false,
+                          true);
+                      Navigator.popUntil(
+                          context, (Route<dynamic> route) => route.isFirst);
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                          content: Text('Please enter the required details!')));
                     }
-                    return null;
                   },
+                  child: submitState,
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-                child: TextFormField(
-                  controller: description,
-                  style: const TextStyle(
-                    fontSize: 20,
-                    color: Colors.black,
-                  ),
-                  autofocus: true,
-                  maxLines: 10,
-                  maxLength: 300,
-                  decoration: const InputDecoration(
-                    border:OutlineInputBorder(),
-                    labelText: 'Enter description',
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please Enter the Description';
-                    }
-                    return null;
-                  },
-                ),
-              ),
-              ElevatedButton(
-                style: ButtonStyle(
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(25.0)
-                      )
-                  ),
-                  fixedSize: MaterialStateProperty.all(const Size(240, 25)),
-                ),
-                onPressed: () async{
-                  if (_formKey.currentState!.validate() && _imageFile != null) {
-                    setState(() {
-                      submitState = const SizedBox(width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(
-                            color: Colors.white,));
-                    });
-                    await storage.uploadFile(path!, fileName!, 'thumbnails');
-                    await storage.uploadFile(
-                        pathAndName!.path, pathAndName!.fileName, 'videos');
-                    imageUrl = await storageRef.child("thumbnails/$fileName")
-                        .getDownloadURL();
-                    videoUrl =
-                    await storageRef.child("videos/${pathAndName!.fileName}")
-                        .getDownloadURL();
-                    await databaseInstance.writeData(
-                        database,
-                        'courses/${widget.courseName}/videos',
-                        '',
-                        {
-                          'title': title.text,
-                          'url': videoUrl,
-                          'description': description.text,
-                          'thumbnail': imageUrl,
-                          'uploadDate': DateFormat.yMMMMd('en_US').format(
-                              DateTime.now()),
-                          'uploadTime': DateFormat.jm().format(DateTime.now()),
-                        },
-                        false, true);
-                    Navigator.popUntil(
-                        context, (Route<dynamic> route) => route.isFirst);
-                  }
-                  else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Please enter the required details!')));
-                  }
-                },
-                child: submitState,
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
         ],
       ),
     );
   }
 }
-

@@ -15,7 +15,6 @@ class ChangeProfileImage extends StatefulWidget {
 }
 
 class _ChangeProfileImageState extends State<ChangeProfileImage> {
-
   dynamic submitState = const Text('Submit');
   final Storage storage = Storage();
   final storageRef = FirebaseStorage.instance.ref();
@@ -27,26 +26,34 @@ class _ChangeProfileImageState extends State<ChangeProfileImage> {
   final ImagePicker _picker = ImagePicker();
   Database databaseInstance = Database();
   FirebaseDatabase database = FirebaseDatabase.instance;
-  Widget imageProfile(){
+
+  Widget imageProfile() {
     return Stack(
       children: [
         CircleAvatar(
           radius: 80.0,
-          backgroundImage: _imageFile == null? null : FileImage(File(_imageFile!.path)),
+          backgroundImage:
+              _imageFile == null ? null : FileImage(File(_imageFile!.path)),
         ),
         Positioned(
           bottom: 20,
           right: 20,
           child: InkWell(
-            child: const Icon(Icons.camera_alt_outlined, color: Colors.black, size: 28.0,),
+            child: const Icon(
+              Icons.camera_alt_outlined,
+              color: Colors.black,
+              size: 28.0,
+            ),
             onTap: () {
-              showModalBottomSheet(context: context, builder: (builder) => bottomSheet());
+              showModalBottomSheet(
+                  context: context, builder: (builder) => bottomSheet());
             },
           ),
         ),
       ],
     );
   }
+
   Widget bottomSheet() {
     return Container(
       height: 100,
@@ -63,7 +70,9 @@ class _ChangeProfileImageState extends State<ChangeProfileImage> {
               fontSize: 20.0,
             ),
           ),
-          const SizedBox(height: 20,),
+          const SizedBox(
+            height: 20,
+          ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -88,9 +97,11 @@ class _ChangeProfileImageState extends State<ChangeProfileImage> {
     );
   }
 
-  void takePhoto(ImageSource source) async{
+  void takePhoto(ImageSource source) async {
     final pickedFile = await _picker.pickImage(source: source);
-    setState((){_imageFile = pickedFile;});
+    setState(() {
+      _imageFile = pickedFile;
+    });
     path = _imageFile!.path;
     fileName = _imageFile!.name;
   }
@@ -99,9 +110,12 @@ class _ChangeProfileImageState extends State<ChangeProfileImage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Change Profile Picture', style: TextStyle(color: Colors.black),),
+        title: const Text(
+          'Change Profile Picture',
+          style: TextStyle(color: Colors.black),
+        ),
         elevation: 0.0,
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.cyan[100],
         iconTheme: const IconThemeData(color: Colors.black),
       ),
       body: ListView(
@@ -111,49 +125,59 @@ class _ChangeProfileImageState extends State<ChangeProfileImage> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 imageProfile(),
-                const SizedBox(height: 60,),
+                const SizedBox(
+                  height: 60,
+                ),
                 ElevatedButton(
                   style: ButtonStyle(
                     shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(25.0)
-                      )
-                    ),
+                        RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(25.0))),
                     fixedSize: MaterialStateProperty.all(const Size(240, 25)),
                   ),
                   onPressed: () async {
                     if (_imageFile != null) {
-                      setState(() {submitState = const SizedBox(width: 20, height: 20,child: CircularProgressIndicator(color: Colors.white,));});
-                      final dataRef = await database.ref().child('users/${await FirebaseAuth.instance.currentUser!.uid}/photoName').get();
+                      setState(() {
+                        submitState = const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                            ));
+                      });
+                      final dataRef = await database
+                          .ref()
+                          .child(
+                              'users/${await FirebaseAuth.instance.currentUser!.uid}/photoName')
+                          .get();
                       final oldProfileImg = dataRef.value.toString();
-                      await storageRef.child("profile_img/$oldProfileImg").delete();
+                      await storageRef
+                          .child("profile_img/$oldProfileImg")
+                          .delete();
                       await storage.uploadFile(path!, fileName!, 'profile_img');
-                      imageUrl = await storageRef.child("profile_img/$fileName").getDownloadURL();
-                      await FirebaseAuth.instance.currentUser!.updatePhotoURL(imageUrl);
+                      imageUrl = await storageRef
+                          .child("profile_img/$fileName")
+                          .getDownloadURL();
+                      await FirebaseAuth.instance.currentUser!
+                          .updatePhotoURL(imageUrl);
                       await FirebaseAuth.instance.currentUser!.reload();
                       await databaseInstance.writeData(
                           database,
                           '',
                           'users/${await FirebaseAuth.instance.currentUser!.uid}',
                           {
-                              'photoUrl' : FirebaseAuth.instance.currentUser!.photoURL,
-                              'photoName' : fileName,
+                            'photoUrl':
+                                FirebaseAuth.instance.currentUser!.photoURL,
+                            'photoName': fileName,
                           },
-                          false, false);
-                      Navigator.of(context)
-                        ..pop()
-                        ..pop();
-                      //Navigator.pop(context);
-
-
-                      //image_url = await storageRef.getDownloadURL();
-                      // ScaffoldMessenger.of(context).showSnackBar(
-                      //   const SnackBar(content: Text('Processing Data')),
-                      // );
-                    }
-                    else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Please enter your name and select a profile picture!')));
+                          false,
+                          false);
+                      Navigator.popUntil(
+                          context, (Route<dynamic> route) => route.isFirst);
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                          content: Text(
+                              'Please enter your name and select a profile picture!')));
                     }
                   },
                   child: submitState,

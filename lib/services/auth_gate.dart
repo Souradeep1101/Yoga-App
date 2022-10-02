@@ -6,6 +6,7 @@ import 'package:yoga_app/services/email_verification.dart';
 import 'package:yoga_app/services/error_screen.dart';
 
 import '../screens/home.dart';
+
 final FirebaseAuth auth = FirebaseAuth.instance;
 User? user;
 
@@ -18,7 +19,6 @@ class AuthGate extends StatelessWidget {
       stream: FirebaseAuth.instance.authStateChanges(),
       initialData: FirebaseAuth.instance.currentUser,
       builder: (context, snapshot) {
-        // User is not signed in
         if (!snapshot.hasData) {
           return const SignInScreen(
             providerConfigs: [
@@ -28,20 +28,21 @@ class AuthGate extends StatelessWidget {
           );
         }
         user = FirebaseAuth.instance.currentUser;
-        if(user != null) {
-          if(user?.displayName != null && user?.photoURL != null && (user?.emailVerified != null && user?.emailVerified != false) ) {
+        if (user != null) {
+          if (user?.displayName != null &&
+              user?.photoURL != null &&
+              (user?.emailVerified != null && user?.emailVerified != false)) {
             return const Home();
-          }
-          else {
-            if(user?.displayName == null && user?.photoURL == null && (user?.emailVerified == null || user?.emailVerified != true)) {
+          } else {
+            if (user?.displayName == null &&
+                user?.photoURL == null &&
+                (user?.emailVerified == null || user?.emailVerified != true)) {
               return const ProfileCreation();
-            }
-            else {
+            } else {
               return const EmailVerify();
             }
           }
-        }
-        else {
+        } else {
           return const ErrorScreen();
         }
       },
@@ -49,17 +50,14 @@ class AuthGate extends StatelessWidget {
   }
 }
 
-
 User? getUser() {
   return user;
 }
 
 String getUID() {
   return user!.uid;
-  }
+}
 
-  bool userIsRegistered() {
+bool userIsRegistered() {
   return false;
-  }
-
-
+}
