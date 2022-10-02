@@ -36,6 +36,7 @@ class _ViewVideoState extends State<ViewVideo> {
               Center(
                 child: SizedBox(
                   width: MediaQuery.of(context).size.width - 40,
+                  height: 270,
                   child: AllVideoPlayer(
                     videoPlayerController: VideoPlayerController.network(data['url'].toString()),
                     looping: true,
