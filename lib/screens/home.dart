@@ -56,61 +56,61 @@ class _HomeState extends State<Home> {
                     itemBuilder: (BuildContext context, DataSnapshot snapshot,
                         Animation<double> animation, int index) {
                       dynamic value = snapshot.value;
-                      return Card(
-                        clipBehavior: Clip.antiAlias,
-                        child: Column(
-                          children: [
-                            CachedNetworkImage(
-                              imageUrl: value['thumbnail'].toString(),
-                              progressIndicatorBuilder:
-                                  (context, url, downloadProgress) =>
-                                      CircularProgressIndicator(
-                                          value: downloadProgress.progress),
-                              errorWidget: (context, url, error) =>
-                                  const Icon(Icons.error),
-                            ),
-                            ListTile(
-                              leading: const Icon(Icons.title_outlined),
-                              title: Text(value['title'].toString()),
-                              subtitle: Text(
-                                snapshot.key as String,
-                                style: TextStyle(
-                                    color: Colors.black.withOpacity(0.6)),
+                        return Card(
+                          clipBehavior: Clip.antiAlias,
+                          child: Column(
+                            children: [
+                              CachedNetworkImage(
+                                imageUrl: value['thumbnail'].toString(),
+                                progressIndicatorBuilder:
+                                    (context, url, downloadProgress) =>
+                                    CircularProgressIndicator(
+                                        value: downloadProgress.progress),
+                                errorWidget: (context, url, error) =>
+                                const Icon(Icons.error),
                               ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Text(
-                                'Uploaded on ${value['uploadDate'].toString()} at ${value['uploadTime'].toString()}',
-                                style: TextStyle(
-                                    color: Colors.black.withOpacity(0.6)),
+                              ListTile(
+                                leading: const Icon(Icons.title_outlined),
+                                title: Text(value['title'].toString()),
+                                subtitle: Text(
+                                  snapshot.key as String,
+                                  style: TextStyle(
+                                      color: Colors.black.withOpacity(0.6)),
+                                ),
                               ),
-                            ),
-                            ButtonBar(
-                              alignment: MainAxisAlignment.start,
-                              children: [
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => ViewCourse(
-                                                courseName: snapshot.key)));
-                                  },
-                                  child: const Text('View Course'),
+                              Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: Text(
+                                  'Uploaded on ${value['uploadDate'].toString()} at ${value['uploadTime'].toString()}',
+                                  style: TextStyle(
+                                      color: Colors.black.withOpacity(0.6)),
                                 ),
-                                TextButton(
-                                  onPressed: () {
-                                    Share.share(
-                                        'Check out the latest course: ${value['title'].toString()} uploaded on the Yoga App! Download the app now!');
-                                  },
-                                  child: const Text('Share'),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      );
+                              ),
+                              ButtonBar(
+                                alignment: MainAxisAlignment.start,
+                                children: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => ViewCourse(
+                                                  courseName: snapshot.key)));
+                                    },
+                                    child: const Text('View Course'),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      Share.share(
+                                          'Check out the latest course: ${value['title'].toString()} uploaded on the Yoga App! Download the app now!');
+                                    },
+                                    child: const Text('Share'),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        );
                     })),
           ],
         ),

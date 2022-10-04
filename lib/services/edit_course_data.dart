@@ -1,27 +1,27 @@
 import 'dart:io';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:yoga_app/services/realtime_database.dart';
 import 'package:yoga_app/services/storage_service.dart';
 import '../screens/file_upload.dart';
 
-class UploadFile extends StatefulWidget {
+class EditCourseData extends StatefulWidget {
   String? courseName;
-
-  UploadFile({Key? key, required this.courseName}) : super(key: key);
+  EditCourseData({Key? key, required this.courseName}) : super(key: key);
 
   @override
-  State<UploadFile> createState() => _UploadFileState();
+  State<EditCourseData> createState() => _EditCourseDataState();
 }
 
-class _UploadFileState extends State<UploadFile> {
+class _EditCourseDataState extends State<EditCourseData> {
   dynamic submitState = const Text('Submit');
+  String? courseName;
   final _formKey = GlobalKey<FormState>();
   final title = TextEditingController();
-  final description = TextEditingController();
+  bool freemium = false;
   final Storage storage = Storage();
   final storageRef = FirebaseStorage.instance.ref();
   String? imageUrl;
@@ -37,7 +37,6 @@ class _UploadFileState extends State<UploadFile> {
   @override
   void dispose() {
     title.dispose();
-    description.dispose();
     super.dispose();
   }
 
@@ -133,7 +132,7 @@ class _UploadFileState extends State<UploadFile> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Upload File',
+          'Editing course',
           style: TextStyle(color: Colors.black),
         ),
         elevation: 0.0,
@@ -150,7 +149,7 @@ class _UploadFileState extends State<UploadFile> {
                 imageProfile(),
                 Padding(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+                  const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
                   child: TextFormField(
                     controller: title,
                     style: const TextStyle(
@@ -170,35 +169,21 @@ class _UploadFileState extends State<UploadFile> {
                     },
                   ),
                 ),
-                Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-                  child: TextFormField(
-                    controller: description,
-                    style: const TextStyle(
-                      fontSize: 20,
-                      color: Colors.black,
-                    ),
-                    autofocus: true,
-                    maxLines: 10,
-                    maxLength: 300,
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: 'Enter description',
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please Enter the Description';
-                      }
-                      return null;
-                    },
-                  ),
+                FilterChip(
+                  label: const Text('Freemium'),
+                  onSelected: (bool value) {
+                    setState(() {
+                      freemium = value;
+                    });
+                  },
+                  selected: freemium,
                 ),
                 ElevatedButton(
                   style: ButtonStyle(
                     shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(25.0))),
+                      RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(25.0)),
+                    ),
                     fixedSize: MaterialStateProperty.all(const Size(240, 25)),
                   ),
                   onPressed: () async {
@@ -212,31 +197,22 @@ class _UploadFileState extends State<UploadFile> {
                               color: Colors.white,
                             ));
                       });
-                      await storage.uploadFile(path!, fileName!, 'thumbnails/');
                       await storage.uploadFile(
-                          pathAndName!.path, pathAndName!.fileName, 'videos');
+                          path!, fileName!, 'thumbnails/course_thumbnails');
                       imageUrl = await storageRef
-                          .child("thumbnails/$fileName")
-                          .getDownloadURL();
-                      videoUrl = await storageRef
-                          .child("videos/${pathAndName!.fileName}")
+                          .child("thumbnails/course_thumbnails/$fileName")
                           .getDownloadURL();
                       await databaseInstance.writeData(
                           database,
-                          'courses/${widget.courseName}/videos',
                           '',
+                          'courses/${widget.courseName}',
                           {
                             'title': title.text,
-                            'url': videoUrl,
-                            'description': description.text,
+                            'freemium': freemium,
                             'thumbnail': imageUrl,
-                            'uploadDate': DateFormat.yMMMMd('en_US')
-                                .format(DateTime.now()),
-                            'uploadTime':
-                                DateFormat.jm().format(DateTime.now()),
                           },
                           false,
-                          true);
+                          false);
                       Navigator.popUntil(
                           context, (Route<dynamic> route) => route.isFirst);
                     } else {

@@ -1,23 +1,24 @@
 import 'dart:io';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:yoga_app/services/realtime_database.dart';
 import 'package:yoga_app/services/storage_service.dart';
 import '../screens/file_upload.dart';
 
-class UploadFile extends StatefulWidget {
-  String? courseName;
+IdentifyCourse? course;
 
-  UploadFile({Key? key, required this.courseName}) : super(key: key);
+
+class EditVideoData extends StatefulWidget {
+  String? videoName;
+  EditVideoData({Key? key, required this.videoName}) : super(key: key);
 
   @override
-  State<UploadFile> createState() => _UploadFileState();
+  State<EditVideoData> createState() => _EditVideoDataState();
 }
 
-class _UploadFileState extends State<UploadFile> {
+class _EditVideoDataState extends State<EditVideoData> {
   dynamic submitState = const Text('Submit');
   final _formKey = GlobalKey<FormState>();
   final title = TextEditingController();
@@ -133,7 +134,7 @@ class _UploadFileState extends State<UploadFile> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Upload File',
+          'Editing video',
           style: TextStyle(color: Colors.black),
         ),
         elevation: 0.0,
@@ -150,7 +151,7 @@ class _UploadFileState extends State<UploadFile> {
                 imageProfile(),
                 Padding(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+                  const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
                   child: TextFormField(
                     controller: title,
                     style: const TextStyle(
@@ -172,7 +173,7 @@ class _UploadFileState extends State<UploadFile> {
                 ),
                 Padding(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+                  const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
                   child: TextFormField(
                     controller: description,
                     style: const TextStyle(
@@ -213,30 +214,21 @@ class _UploadFileState extends State<UploadFile> {
                             ));
                       });
                       await storage.uploadFile(path!, fileName!, 'thumbnails/');
-                      await storage.uploadFile(
-                          pathAndName!.path, pathAndName!.fileName, 'videos');
+
                       imageUrl = await storageRef
                           .child("thumbnails/$fileName")
                           .getDownloadURL();
-                      videoUrl = await storageRef
-                          .child("videos/${pathAndName!.fileName}")
-                          .getDownloadURL();
                       await databaseInstance.writeData(
                           database,
-                          'courses/${widget.courseName}/videos',
                           '',
+                          'courses/${widget.videoName}/videos/',
                           {
                             'title': title.text,
-                            'url': videoUrl,
                             'description': description.text,
                             'thumbnail': imageUrl,
-                            'uploadDate': DateFormat.yMMMMd('en_US')
-                                .format(DateTime.now()),
-                            'uploadTime':
-                                DateFormat.jm().format(DateTime.now()),
                           },
                           false,
-                          true);
+                          false);
                       Navigator.popUntil(
                           context, (Route<dynamic> route) => route.isFirst);
                     } else {

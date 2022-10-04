@@ -9,7 +9,6 @@ class Storage {
   Future<void> uploadFile(
       String filePath, String fileName, String directory) async {
     File file = File(filePath);
-
     try {
       await storage.ref('$directory/$fileName').putFile(file);
     } on firebase_core.FirebaseException catch (e) {

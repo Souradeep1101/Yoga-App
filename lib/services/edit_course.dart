@@ -2,28 +2,39 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
-import 'package:yoga_app/screens/file_upload.dart';
-import 'package:yoga_app/screens/upload_type.dart';
-import '../services/edit_course.dart';
-import '../services/edit_course_data.dart';
-import '../services/view_course.dart';
+import 'package:share_plus/share_plus.dart';
+import 'edit_video.dart';
 
-DatabaseReference ref = FirebaseDatabase.instance.ref('courses');
+Widget? title;
 
-class ViewCourses extends StatefulWidget {
-  const ViewCourses({Key? key}) : super(key: key);
+late DatabaseReference ref;
+
+class EditCourse extends StatefulWidget {
+  String? courseName;
+
+  EditCourse({Key? key, required this.courseName}) : super(key: key);
 
   @override
-  State<ViewCourses> createState() => _ViewCoursesState();
+  State<EditCourse> createState() => _EditCourseState();
 }
 
-class _ViewCoursesState extends State<ViewCourses> {
+class _EditCourseState extends State<EditCourse> {
+
+  final name = TextEditingController();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    ref = FirebaseDatabase.instance.ref('courses/${widget.courseName}/videos');
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Viewing Courses',
+          'Viewing Course',
           style: TextStyle(color: Colors.black),
         ),
         elevation: 0.0,
@@ -39,6 +50,7 @@ class _ViewCoursesState extends State<ViewCourses> {
                   itemBuilder: (BuildContext context, DataSnapshot snapshot,
                       Animation<double> animation, int index) {
                     dynamic value = snapshot.value;
+                      title = Text(value['title'].toString());
                       return Card(
                         clipBehavior: Clip.antiAlias,
                         child: Column(
@@ -53,11 +65,9 @@ class _ViewCoursesState extends State<ViewCourses> {
                               const Icon(Icons.error),
                             ),
                             ListTile(
-                              leading: IconButton(
-                                  onPressed: () {
-                                    Navigator.push(context, MaterialPageRoute(builder: (context) => EditCourseData(courseName: snapshot.key as String)));
-                                  }, icon: Icon(Icons.edit)),
-                              title: Text(value['title'].toString()),
+                              //leading: const Icon(Icons.title_outlined),
+                              leading: Icon(Icons.title_outlined),
+                              title: title,
                               subtitle: Text(
                                 snapshot.key as String,
                                 style: TextStyle(
@@ -76,44 +86,31 @@ class _ViewCoursesState extends State<ViewCourses> {
                               alignment: MainAxisAlignment.start,
                               children: [
                                 TextButton(
-                                  //textColor: const Color(0xFF6200EE),
                                   onPressed: () {
                                     Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                            builder: (context) => EditCourse(
-                                                courseName: snapshot.key)));
+                                            builder: (context) => EditVideo(
+                                              value: value,
+                                              snapshotKey: snapshot.key as String,
+                                            )));
                                   },
-                                  child: const Text('Edit Course'),
+                                  child: const Text('Edit Video'),
                                 ),
                                 TextButton(
-                                  //textColor: const Color(0xFF6200EE),
                                   onPressed: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => Upload(
-                                                courseName: snapshot.key)));
+                                    Share.share(
+                                        'Check out the latest course: ${value['title']} uploaded on the Yoga App! Download the app now!');
                                   },
-                                  child: const Text('Upload Video'),
+                                  child: const Text('Share'),
                                 ),
                               ],
                             ),
-                            //Image.asset('assets/card-sample-image-2.jpg'),
                           ],
                         ),
                       );
                   })),
         ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const UploadType()),
-          );
-        },
-        child: const Icon(Icons.upload_file_outlined),
       ),
     );
   }

@@ -57,7 +57,7 @@ class _UploadTypeState extends State<UploadType> {
                       borderRadius: BorderRadius.circular(25.0))),
               fixedSize: MaterialStateProperty.all(const Size(240, 25)),
             ),
-            child: const Text('View Existing Courses'),
+            child: const Text('Edit Existing Courses'),
           )
         ],
       ),

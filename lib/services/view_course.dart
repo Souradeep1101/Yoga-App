@@ -1,8 +1,11 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:yoga_app/services/view_video.dart';
+
+Widget? title;
 
 late DatabaseReference ref;
 
@@ -16,6 +19,9 @@ class ViewCourse extends StatefulWidget {
 }
 
 class _ViewCourseState extends State<ViewCourse> {
+
+  //final name = TextEditingController();
+
   @override
   void initState() {
     // TODO: implement initState
@@ -44,54 +50,91 @@ class _ViewCourseState extends State<ViewCourse> {
                   itemBuilder: (BuildContext context, DataSnapshot snapshot,
                       Animation<double> animation, int index) {
                     dynamic value = snapshot.value;
-                    return Card(
-                      clipBehavior: Clip.antiAlias,
-                      child: Column(
-                        children: [
-                          Image.network(value['thumbnail'].toString()),
-                          ListTile(
-                            leading: const Icon(Icons.arrow_drop_down_circle),
-                            title: Text(value['title'].toString()),
-                            subtitle: Text(
-                              snapshot.key as String,
-                              style: TextStyle(
-                                  color: Colors.black.withOpacity(0.6)),
+                      title = Text(value['title'].toString());
+                      return Card(
+                        clipBehavior: Clip.antiAlias,
+                        child: Column(
+                          children: [
+                            CachedNetworkImage(
+                              imageUrl: value['thumbnail'].toString(),
+                              progressIndicatorBuilder:
+                                  (context, url, downloadProgress) =>
+                                  CircularProgressIndicator(
+                                      value: downloadProgress.progress),
+                              errorWidget: (context, url, error) =>
+                              const Icon(Icons.error),
                             ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Text(
-                              'Uploaded on ${value['uploadDate'].toString()} at ${value['uploadTime'].toString()}',
-                              style: TextStyle(
-                                  color: Colors.black.withOpacity(0.6)),
+                            ListTile(
+                              leading: const Icon(Icons.title_outlined),
+                              // leading: IconButton(
+                              //     onPressed: () {
+                              //       setState(() {
+                              //         title = Padding(
+                              //           padding:
+                              //           const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+                              //           child: TextFormField(
+                              //             controller: name,
+                              //             style: const TextStyle(
+                              //               fontSize: 20,
+                              //               color: Colors.black,
+                              //             ),
+                              //             autofocus: true,
+                              //             decoration: const InputDecoration(
+                              //               border: OutlineInputBorder(),
+                              //               labelText: 'Enter title',
+                              //             ),
+                              //             // The validator receives the text that the user has entered.
+                              //             validator: (value) {
+                              //               if (value == null || value.isEmpty) {
+                              //                 return 'Please enter the title of the course!';
+                              //               }
+                              //               return null;
+                              //             },
+                              //           ),
+                              //         );
+                              //       });
+                              //     }, icon: Icon(Icons.edit)),
+                              title: title,
+                              subtitle: Text(
+                                snapshot.key as String,
+                                style: TextStyle(
+                                    color: Colors.black.withOpacity(0.6)),
+                              ),
                             ),
-                          ),
-                          ButtonBar(
-                            alignment: MainAxisAlignment.start,
-                            children: [
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => ViewVideo(
-                                                value: value,
-                                              )));
-                                },
-                                child: const Text('View Course'),
+                            Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Text(
+                                'Uploaded on ${value['uploadDate'].toString()} at ${value['uploadTime'].toString()}',
+                                style: TextStyle(
+                                    color: Colors.black.withOpacity(0.6)),
                               ),
-                              TextButton(
-                                onPressed: () {
-                                  Share.share(
-                                      'Check out the latest course: ${value['title']} uploaded on the Yoga App! Download the app now!');
-                                },
-                                child: const Text('Share'),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    );
+                            ),
+                            ButtonBar(
+                              alignment: MainAxisAlignment.start,
+                              children: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => ViewVideo(
+                                              value: value,
+                                            )));
+                                  },
+                                  child: const Text('View Course'),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    Share.share(
+                                        'Check out the latest course: ${value['title']} uploaded on the Yoga App! Download the app now!');
+                                  },
+                                  child: const Text('Share'),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      );
                   })),
         ],
       ),

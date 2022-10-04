@@ -11,14 +11,6 @@ class _ErrorScreenState extends State<ErrorScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Error',
-          style: TextStyle(color: Colors.red),
-        ),
-        elevation: 0.0,
-        backgroundColor: Colors.cyan[100],
-      ),
       body: Center(
         child: SizedBox(
           width: MediaQuery.of(context).size.width,
