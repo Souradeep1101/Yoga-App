@@ -5,7 +5,7 @@ on:
   push:
     branches:
       - master
-name: "Build & Release"
+name: "Release"
 jobs:
   build:
     name: Build & Release
