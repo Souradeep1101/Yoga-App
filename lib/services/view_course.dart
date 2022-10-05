@@ -66,34 +66,6 @@ class _ViewCourseState extends State<ViewCourse> {
                             ),
                             ListTile(
                               leading: const Icon(Icons.title_outlined),
-                              // leading: IconButton(
-                              //     onPressed: () {
-                              //       setState(() {
-                              //         title = Padding(
-                              //           padding:
-                              //           const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-                              //           child: TextFormField(
-                              //             controller: name,
-                              //             style: const TextStyle(
-                              //               fontSize: 20,
-                              //               color: Colors.black,
-                              //             ),
-                              //             autofocus: true,
-                              //             decoration: const InputDecoration(
-                              //               border: OutlineInputBorder(),
-                              //               labelText: 'Enter title',
-                              //             ),
-                              //             // The validator receives the text that the user has entered.
-                              //             validator: (value) {
-                              //               if (value == null || value.isEmpty) {
-                              //                 return 'Please enter the title of the course!';
-                              //               }
-                              //               return null;
-                              //             },
-                              //           ),
-                              //         );
-                              //       });
-                              //     }, icon: Icon(Icons.edit)),
                               title: title,
                               subtitle: Text(
                                 snapshot.key as String,
@@ -121,12 +93,12 @@ class _ViewCourseState extends State<ViewCourse> {
                                               value: value,
                                             )));
                                   },
-                                  child: const Text('View Course'),
+                                  child: const Text('View Video'),
                                 ),
                                 TextButton(
                                   onPressed: () {
                                     Share.share(
-                                        'Check out the latest course: ${value['title']} uploaded on the Yoga App! Download the app now!');
+                                        'Check out the latest course: ${value['title']} uploaded on the Yoga App! Download the latest version of the app now! Link: https://github.com/Souradeep1101/Yoga-App/releases');
                                   },
                                   child: const Text('Share'),
                                 ),

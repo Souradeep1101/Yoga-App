@@ -100,7 +100,7 @@ class _EditCourseState extends State<EditCourse> {
                                 TextButton(
                                   onPressed: () {
                                     Share.share(
-                                        'Check out the latest course: ${value['title']} uploaded on the Yoga App! Download the app now!');
+                                        'Check out the latest course: ${value['title']} uploaded on the Yoga App! Download the latest version of the app now! Link: https://github.com/Souradeep1101/Yoga-App/releases');
                                   },
                                   child: const Text('Share'),
                                 ),
