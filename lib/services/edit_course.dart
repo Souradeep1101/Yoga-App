@@ -34,7 +34,7 @@ class _EditCourseState extends State<EditCourse> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Viewing Course',
+          'Editing Course',
           style: TextStyle(color: Colors.black),
         ),
         elevation: 0.0,

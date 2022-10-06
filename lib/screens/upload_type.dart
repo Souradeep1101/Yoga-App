@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:yoga_app/screens/view_courses.dart';
+import 'package:yoga_app/screens/edit_courses.dart';
 import 'package:yoga_app/services/create_course.dart';
 
 class UploadType extends StatefulWidget {

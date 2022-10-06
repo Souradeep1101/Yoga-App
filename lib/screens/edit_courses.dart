@@ -23,7 +23,7 @@ class _ViewCoursesState extends State<ViewCourses> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Viewing Courses',
+          'Editing Courses',
           style: TextStyle(color: Colors.black),
         ),
         elevation: 0.0,
@@ -105,15 +105,6 @@ class _ViewCoursesState extends State<ViewCourses> {
                       );
                   })),
         ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const UploadType()),
-          );
-        },
-        child: const Icon(Icons.upload_file_outlined),
       ),
     );
   }

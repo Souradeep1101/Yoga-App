@@ -32,7 +32,7 @@ class _EditVideoState extends State<EditVideo> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text(
-          'Viewing video',
+          'Editing video',
           style: TextStyle(color: Colors.black),
         ),
         elevation: 0.0,
