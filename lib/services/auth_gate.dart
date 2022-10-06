@@ -29,7 +29,6 @@ class AuthGate extends StatelessWidget {
           },
             providerConfigs: const [
               EmailProviderConfiguration(),
-              AppleProviderConfiguration(),
             ],
           );
         }

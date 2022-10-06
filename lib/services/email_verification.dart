@@ -57,13 +57,15 @@ class _EmailVerifyState extends State<EmailVerify> {
           height: MediaQuery.of(context).size.height,
           child: Center(
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: const [
                 SpinKitWave(
                   color: Colors.black,
                 ),
                 Text(
-                    'In order to use this app you need to verify your email address, we have send you a verification link. Click on the link to verify!'),
+                    'In order to use this app you need to verify your email address, we have send you a verification link. Click on the link to verify!'
+                        ' If not found, check the spam folder in emails!'),
+                SizedBox(height: 20,),
               ],
             ),
           ),
