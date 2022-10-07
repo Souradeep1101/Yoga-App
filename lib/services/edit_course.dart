@@ -66,7 +66,7 @@ class _EditCourseState extends State<EditCourse> {
                             ),
                             ListTile(
                               //leading: const Icon(Icons.title_outlined),
-                              leading: Icon(Icons.title_outlined),
+                              leading: const Icon(Icons.title_outlined),
                               title: title,
                               subtitle: Text(
                                 snapshot.key as String,
@@ -92,6 +92,7 @@ class _EditCourseState extends State<EditCourse> {
                                         MaterialPageRoute(
                                             builder: (context) => EditVideo(
                                               value: value,
+                                              courseSnapshotKey: 'courses/${widget.courseName}/videos',
                                               snapshotKey: snapshot.key as String,
                                             )));
                                   },

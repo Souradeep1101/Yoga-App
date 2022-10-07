@@ -10,9 +10,10 @@ dynamic data;
 
 class EditVideo extends StatefulWidget {
   dynamic value;
+  String? courseSnapshotKey;
   String? snapshotKey;
 
-  EditVideo({Key? key, required this.value, required this.snapshotKey}) : super(key: key);
+  EditVideo({Key? key, required this.value, required this.snapshotKey, required this.courseSnapshotKey}) : super(key: key);
 
   @override
   State<EditVideo> createState() => _EditVideoState();
@@ -54,7 +55,7 @@ class _EditVideoState extends State<EditVideo> {
           ),
           IconButton(
               onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => EditVideoData(videoName: widget.snapshotKey as String)));
+                Navigator.push(context, MaterialPageRoute(builder: (context) => EditVideoData(videoName: widget.snapshotKey as String, courseName: widget.courseSnapshotKey,)));
               }, icon: Icon(Icons.edit)),
           Container(
             padding: const EdgeInsets.only(left: 20, right: 20, top: 10),

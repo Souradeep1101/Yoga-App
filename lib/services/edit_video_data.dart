@@ -5,14 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:yoga_app/services/realtime_database.dart';
 import 'package:yoga_app/services/storage_service.dart';
-import '../screens/file_upload.dart';
-
 IdentifyCourse? course;
 
 
 class EditVideoData extends StatefulWidget {
   String? videoName;
-  EditVideoData({Key? key, required this.videoName}) : super(key: key);
+  String? courseName;
+  EditVideoData({Key? key,required this.courseName, required this.videoName}) : super(key: key);
 
   @override
   State<EditVideoData> createState() => _EditVideoDataState();
@@ -221,7 +220,7 @@ class _EditVideoDataState extends State<EditVideoData> {
                       await databaseInstance.writeData(
                           database,
                           '',
-                          'courses/${widget.videoName}/videos/',
+                          '${widget.courseName}/${widget.videoName}/',
                           {
                             'title': title.text,
                             'description': description.text,
